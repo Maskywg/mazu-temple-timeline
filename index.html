@@ -521,6 +521,8 @@
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => Array.from(document.querySelectorAll(selector));
     const escapeHtml = (text) => String(text).replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char]));
+    const scaleYear = year => 7 + ((year - 1590) / (1870 - 1590)) * (93 - 7);
+    const timelineX = year => (scaleYear(year) / 100) * 1400;
 
     function filteredTemples() {
       return temples
@@ -603,19 +605,18 @@
     function renderChart(items) {
       const chartItems = laneTemples(items);
       const ticks = [1600, 1620, 1640, 1660, 1680, 1700, 1720, 1740, 1760, 1780, 1800, 1820, 1840, 1860];
-      const timelineX = year => 90 + ((year - 1590) / 280) * (1400 - 180);
       $("#listArea").innerHTML = `
         <div class="chart-panel panel">
           <div class="section-title">
-            <div><h2>等比例建廟分佈時間軸圖</h2><p>以歷史年代為軸線，動態避免文字重疊分層顯示</p></div>
+            <div><h2>等比例建廟分佈時間軸圖</h2><p>以歷史年代為軸線，已優化邊界以防文字裁切</p></div>
             <span class="pill">左右拖曳觀看</span>
           </div>
           <div class="rail-scroll">
             <div class="rail">
-              <div class="era-band" style="left:0;width:33%;background:rgba(244,63,94,.025)"><span>明代與明鄭時期</span></div>
-              <div class="era-band" style="left:33%;width:42%;background:rgba(245,158,11,.025)"><span>清領統治初期</span></div>
-              <div class="era-band" style="left:75%;width:25%;background:rgba(120,113,108,.04)"><span>清領中後期</span></div>
-              <div class="axis" style="left:90px;right:90px"></div>
+              <div class="era-band" style="left:0;width:${scaleYear(1683.5)}%;background:rgba(244,63,94,.025)"><span>明代與明鄭時期</span></div>
+              <div class="era-band" style="left:${scaleYear(1683.5)}%;width:${scaleYear(1800) - scaleYear(1683.5)}%;background:rgba(245,158,11,.025)"><span>清領統治初期</span></div>
+              <div class="era-band" style="left:${scaleYear(1800)}%;width:${100 - scaleYear(1800)}%;background:rgba(120,113,108,.04)"><span>清領中後期</span></div>
+              <div class="axis" style="left:${scaleYear(1590)}%;right:auto;width:${scaleYear(1870) - scaleYear(1590)}%"></div>
               ${ticks.map(year => `<div class="tick" style="left:${timelineX(year)}px"><span>${year}</span></div>`).join("")}
               ${chartItems.map(chartNode).join("")}
             </div>
@@ -627,7 +628,7 @@
     function chartNode(t) {
       const selected = state.selectedId === t.id && !state.compareMode;
       const comparing = state.compareIds.includes(t.id);
-      const left = 90 + ((t.year - 1590) / 280) * (1400 - 180);
+      const left = timelineX(t.year);
       const up = t.lane % 2 === 1;
       const depth = Math.floor(t.lane / 2) + 1;
       const offset = (up ? -1 : 1) * 45 * depth;
