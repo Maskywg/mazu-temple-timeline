@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台灣媽祖信仰：建廟歷史時間軸與地圖</title>
+  <meta name="description" content="台灣媽祖古廟互動式建廟時間軸、地圖、宮廟比較與文化知識挑戰。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --red: #9f1239;
+      --red-2: #be123c;
+      --amber: #b45309;
+      --gold: #d97706;
+      --ink: #292524;
+      --muted: #78716c;
+      --line: #e7e5e4;
+      --paper: #fffdfa;
+      --wash: #fafaf9;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 50% -10%, rgba(251, 191, 36, .18), transparent 36rem), var(--wash);
+      color: var(--ink);
+      font-family: "Noto Sans TC", system-ui, sans-serif;
+      line-height: 1.65;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid #fee2e2;
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 26px rgba(120, 53, 15, .07);
+    }
+    .nav, main, footer > div {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 0;
+    }
+    .brand { display: flex; gap: 12px; align-items: center; min-width: 0; }
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, #991b1b, #d97706);
+      box-shadow: 0 10px 22px rgba(153, 27, 27, .18);
+      flex: 0 0 auto;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.08rem, 2vw, 1.55rem);
+      line-height: 1.25;
+      color: var(--red);
+      font-weight: 900;
+    }
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--amber);
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .nav-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .btn {
+      border: 1px solid #fecaca;
+      background: #fff1f2;
+      color: #881337;
+      border-radius: 8px;
+      padding: 8px 13px;
+      font-size: .84rem;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(120, 53, 15, .1); }
+    .btn.primary, .btn.active { background: var(--gold); color: white; border-color: var(--gold); }
+    main { padding: 28px 0 56px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .panel, .stat, .controls, .card {
+      background: rgba(255, 255, 255, .94);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 10px 28px rgba(68, 64, 60, .05);
+    }
+    .stat { padding: 16px; }
+    .stat .label { font-size: .78rem; color: var(--muted); font-weight: 700; }
+    .stat .value { margin-top: 4px; color: var(--red); font-size: 2rem; font-weight: 900; line-height: 1; }
+    .stat small { color: #a8a29e; font-size: .68rem; }
+    .trend { grid-column: span 2; padding: 15px 16px 10px; }
+    .trend-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .trend-title { color: #57534e; font-size: .78rem; font-weight: 800; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: .67rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .controls { padding: 18px; margin-bottom: 26px; }
+    .filter-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .search { flex: 1 1 300px; }
+    input, select {
+      width: 100%;
+      border: 1px solid #d6d3d1;
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      padding: 10px 12px;
+      outline: none;
+    }
+    select { min-width: 150px; }
+    input:focus, select:focus { border-color: var(--red-2); box-shadow: 0 0 0 3px rgba(190, 18, 60, .09); }
+    .segmented { display: flex; padding: 4px; background: #f5f5f4; border: 1px solid var(--line); border-radius: 9px; }
+    .segmented button {
+      border: 0;
+      background: transparent;
+      color: #57534e;
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .segmented button.active { background: var(--red-2); color: white; }
+    .hint {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      color: #78350f;
+      border-radius: 8px;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+    .hint.show { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr);
+      gap: 26px;
+      align-items: start;
+    }
+    .right { position: sticky; top: 94px; display: grid; gap: 22px; }
+    .chart-panel { padding: 18px; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid #f5f5f4;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+    .section-title h2, .section-title h3 { margin: 0; color: var(--red); font-size: .95rem; font-weight: 900; }
+    .section-title p { margin: 2px 0 0; color: var(--muted); font-size: .73rem; font-weight: 600; }
+    .rail-scroll { overflow-x: auto; padding: 8px 0 18px; }
+    .rail-scroll::-webkit-scrollbar { height: 7px; }
+    .rail-scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 99px; }
+    .rail {
+      position: relative;
+      width: 1400px;
+      height: 360px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fafaf9;
+      box-shadow: inset 0 1px 18px rgba(68, 64, 60, .05);
+    }
+    .era-band { position: absolute; top: 0; bottom: 0; border-right: 1px solid rgba(180, 83, 9, .08); }
+    .era-band span { position: absolute; top: 10px; left: 16px; color: rgba(127, 29, 29, .55); font-size: .66rem; font-weight: 900; letter-spacing: .08em; }
+    .axis { position: absolute; left: 0; right: 0; top: 50%; height: 4px; transform: translateY(-50%); background: linear-gradient(90deg, #be123c, #f59e0b, #b45309); }
+    .tick { position: absolute; top: 0; bottom: 0; border-left: 1px dashed #d6d3d1; }
+    .tick span { position: absolute; bottom: 8px; left: 6px; transform: translateX(-50%); color: #a8a29e; font-size: .62rem; font-family: ui-monospace, monospace; }
+    .temple-node { position: absolute; z-index: 2; transform: translate(-50%, -50%); }
+    .stem { position: absolute; left: 50%; width: 1px; transform: translateX(-50%); background: #d6d3d1; }
+    .mini-card {
+      width: 150px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+      text-align: center;
+      padding: 7px 8px;
+      box-shadow: 0 6px 14px rgba(68, 64, 60, .07);
+      transition: .2s ease;
+    }
+    .mini-card:hover, .mini-card.selected { border-color: var(--red-2); transform: scale(1.04); }
+    .mini-card.compare { border-color: var(--gold); background: #fffbeb; transform: scale(1.04); }
+    .mini-card strong { display: block; color: var(--amber); font-size: .62rem; font-family: ui-monospace, monospace; }
+    .mini-card b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .78rem; }
+    .mini-card span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #a8a29e; font-size: .58rem; }
+    .dot { position: absolute; left: 50%; width: 12px; height: 12px; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); background: #94a3b8; box-shadow: 0 1px 8px rgba(68, 64, 60, .18); }
+    .dot.selected { background: var(--red-2); }
+    .dot.compare { background: var(--gold); }
+    .timeline { display: grid; gap: 16px; border-left: 2px solid #e7e5e4; padding-left: 24px; }
+    .timeline-card { position: relative; padding: 18px; transition: .2s ease; }
+    .timeline-card::before {
+      content: "";
+      position: absolute;
+      left: -37px;
+      top: 22px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #d6d3d1;
+      background: white;
+    }
+    .timeline-card.selected { border-color: var(--red-2); }
+    .timeline-card.compare { border-color: var(--gold); background: #fffbeb; }
+    .timeline-card.selected::before { background: var(--red-2); border-color: var(--red-2); }
+    .timeline-card.compare::before { background: var(--gold); border-color: var(--gold); }
+    .meta { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .tag {
+      display: inline-flex;
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+      border-radius: 7px;
+      padding: 2px 8px;
+      font-size: .7rem;
+      font-weight: 900;
+    }
+    .timeline-card h3, .grid-card h3 { margin: 0 0 6px; color: var(--ink); font-size: 1.05rem; }
+    .timeline-card p, .grid-card p { margin: 0; color: #57534e; font-size: .86rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+    .chip { border: 1px solid var(--line); background: #fafaf9; color: #57534e; border-radius: 999px; padding: 2px 8px; font-size: .68rem; font-weight: 800; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-card { padding: 16px; min-height: 210px; display: flex; flex-direction: column; justify-content: space-between; transition: .2s ease; }
+    .grid-card.selected { border-color: var(--red-2); }
+    .grid-card.compare { border-color: var(--gold); background: #fffbeb; }
+    .map-panel { padding: 16px; }
+    .map-box {
+      position: relative;
+      width: min(100%, 360px);
+      margin: 0 auto;
+      aspect-ratio: 4 / 5;
+      background: #fdfdfc;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 20px rgba(68, 64, 60, .06);
+    }
+    .map-box svg { width: 100%; height: 100%; display: block; }
+    .map-note {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: #78716c;
+      font-size: .62rem;
+      font-weight: 900;
+      padding: 5px 8px;
+    }
+    .detail { padding: 20px; }
+    .detail h2 { margin: 6px 0 12px; font-size: 1.6rem; line-height: 1.2; }
+    .detail-box { border: 1px solid var(--line); background: #fafaf9; border-radius: 10px; padding: 14px; color: #57534e; font-size: .9rem; font-weight: 600; }
+    .info-list { display: grid; gap: 13px; margin-top: 16px; }
+    .info-list h4 { margin: 0; color: #78716c; font-size: .72rem; }
+    .info-list p { margin: 2px 0 0; font-size: .9rem; font-weight: 800; }
+    .compare-box { padding: 20px; border: 2px solid var(--gold); }
+    .compare-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px; }
+    .compare-card { border: 1px solid var(--line); border-radius: 10px; background: #fafaf9; padding: 14px; text-align: center; }
+    .compare-card h4 { margin: 3px 0; }
+    .compare-rows { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .compare-rows div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: .84rem; }
+    .compare-rows div:last-child { border-bottom: 0; }
+    .compare-rows span:first-child { color: var(--muted); font-weight: 800; }
+    .compare-rows span:last-child { text-align: right; font-weight: 900; color: var(--red); }
+    .knowledge, .quiz {
+      margin-top: 46px;
+      padding: 24px;
+      border-radius: 16px;
+    }
+    .knowledge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .knowledge-card { background: #fafaf9; border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+    .knowledge-card h3 { color: var(--red); margin: 0 0 8px; font-size: .94rem; }
+    .knowledge-card p { margin: 0; color: #57534e; font-size: .82rem; font-weight: 600; }
+    .quiz { background: linear-gradient(90deg, #fff1f2, #fff, #fff1f2); border: 1px solid #fecaca; }
+    .answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+    .answer {
+      text-align: left;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 10px;
+      padding: 12px;
+      color: var(--ink);
+      font-weight: 800;
+    }
+    .answer.correct { border-color: #16a34a; background: #f0fdf4; color: #166534; }
+    .answer.wrong { border-color: #f43f5e; background: #fff1f2; color: #9f1239; }
+    .answer.disabled { color: #a8a29e; }
+    .explanation { display: none; border: 1px solid var(--line); background: #fffdfa; border-radius: 10px; padding: 14px; color: #57534e; font-size: .9rem; }
+    .explanation.show { display: block; }
+    .empty { padding: 44px 18px; text-align: center; color: var(--muted); }
+    footer { border-top: 1px solid var(--line); background: #f5f5f4; color: #78716c; padding: 32px 0; text-align: center; font-size: .78rem; }
+    @media (max-width: 920px) {
+      .nav, .layout { grid-template-columns: 1fr; }
+      .nav { align-items: flex-start; flex-direction: column; }
+      .right { position: static; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .trend { grid-column: span 2; }
+    }
+    @media (max-width: 640px) {
+      .nav, main, footer > div { width: min(100% - 24px, 1180px); }
+      .brand-mark { width: 42px; height: 42px; }
+      .stats, .grid, .knowledge-grid, .answers, .compare-grid { grid-template-columns: 1fr; }
+      .trend { grid-column: span 1; }
+      .segmented { width: 100%; overflow-x: auto; }
+      .segmented button { white-space: nowrap; }
+      .hint.show { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="nav">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M6 21V8l6-5 6 5v13M9 21v-7h6v7M9 10h.01M15 10h.01" />
+          </svg>
+        </div>
+        <div>
+          <h1>台灣媽祖信仰：建廟歷史時間軸與地圖</h1>
+          <p>Taiwan Mazu Temple Historical Timeline & Map</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn" id="compareToggle">啟動宮廟比對</button>
+        <a class="btn" href="#quiz-section">知識挑戰</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="stats" aria-label="統計摘要">
+      <div class="stat">
+        <div class="label">本系統收錄宮廟</div>
+        <div class="value" id="totalCount">0 <small>座</small></div>
+        <small>台灣歷史精選代表性古廟</small>
+      </div>
+      <div class="stat">
+        <div class="label">國定古蹟</div>
+        <div class="value" id="nationalCount">0 <small>座</small></div>
+        <small>具國家最高級歷史古蹟法定地位</small>
+      </div>
+      <div class="trend panel">
+        <div class="trend-head">
+          <div class="trend-title">台灣媽祖廟歷史建廟累積趨勢 (1590-1870)</div>
+          <span class="pill">移民拓荒期</span>
+        </div>
+        <svg id="trendChart" viewBox="0 0 300 70" preserveAspectRatio="none" aria-label="累積趨勢圖"></svg>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="filter-row">
+        <div class="search">
+          <input id="searchInput" type="search" placeholder="搜尋廟宇名稱、地區（如基隆、台南）、或歷史特色..." />
+        </div>
+        <select id="eraSelect" aria-label="歷史時期">
+          <option value="全部">全部時期</option>
+          <option value="明代以前">明代以前</option>
+          <option value="明朝時期">明朝時期</option>
+          <option value="明鄭時期">明鄭時期</option>
+          <option value="清領初期">清領初期</option>
+          <option value="清領中後期">清領中後期</option>
+        </select>
+        <select id="regionSelect" aria-label="地理區域">
+          <option value="全部">全部區域</option>
+          <option value="北部">北部地區</option>
+          <option value="中部">中部地區</option>
+          <option value="南部">南部地區</option>
+          <option value="離島">離島地區</option>
+        </select>
+        <div class="segmented" aria-label="檢視模式">
+          <button class="active" data-view="chart">等比時間軸圖</button>
+          <button data-view="timeline">垂直列表</button>
+          <button data-view="grid">卡片網格</button>
+        </div>
+      </div>
+      <div class="hint" id="compareHint">
+        <span id="compareHintText">比對模式已啟動：請選擇兩座媽祖廟。</span>
+        <button class="btn primary" id="jumpCompare">查看比對報告</button>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div id="listArea"></div>
+      <aside class="right">
+        <section class="map-panel panel">
+          <div class="section-title">
+            <div>
+              <h2>台灣媽祖古廟地理分佈</h2>
+              <p>互動式定位導覽</p>
+            </div>
+            <span class="pill">點選地標</span>
+          </div>
+          <div class="map-box">
+            <svg id="taiwanMap" viewBox="0 0 320 500" role="img" aria-label="台灣媽祖廟分布地圖"></svg>
+            <div class="map-note">左側群島：澎湖天后宮</div>
+          </div>
+        </section>
+        <section id="detailArea"></section>
+      </aside>
+    </section>
+
+    <section class="knowledge panel">
+      <div class="section-title">
+        <div>
+          <h2>台灣媽祖文史常識專欄</h2>
+          <p>信仰、移民、港市與官方封號的背景</p>
+        </div>
+      </div>
+      <div class="knowledge-grid">
+        <article class="knowledge-card">
+          <h3>1. 北台灣的開荒信仰與「慈祐」</h3>
+          <p>北台灣媽祖信仰崛起，常與河港貿易的繁榮息息相關。新莊慈祐宮見證淡水河早期新莊港繁榮；松山慈祐宮舊稱錫口媽祖廟，是基隆河畔錫口十三街的信仰核心。</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>2. 清代官祀政策與「天后」地位</h3>
+          <p>清廷領台後推廣媽祖信仰，施琅平台後奏請將媽祖由「天妃」加封為「天后」，藉神道教化彰顯統治順應天意。</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>3. 湄洲開基媽祖之流傳</h3>
+          <p>台灣古老媽祖廟如鹿港天后宮、北港朝天宮，常宣稱奉祀自湄洲祖廟恭請的開基神像，使其在刈火、進香網絡中具有重要輩分。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz" id="quiz-section">
+      <div class="section-title">
+        <div>
+          <h2>媽祖信仰文化知識考驗</h2>
+          <p id="quizProgress">問題 1 / 3</p>
+        </div>
+        <span class="pill">挑戰自我</span>
+      </div>
+      <div id="quizBody"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <strong>台灣媽祖信仰互動式建廟歷史時間軸地圖系統</strong>
+      <p>數據與背景參考：中華民國文化部文化資產局、各宮廟公開資料、台灣媽祖信仰相關條目。</p>
+    </div>
+  </footer>
+
+  <script>
+    const temples = [
+      { id:"penghu", name:"澎湖天后宮", year:1604, displayYear:"明萬曆年間 (1604年前)", location:"澎湖縣馬公市", region:"離島", era:"明代以前", class:"國定古蹟", desc:"台灣與離島地區歷史最悠久的媽祖廟，廟內保存有台灣現存歷史最古老的碑石「沈有容諭退紅毛番韋麻郎等」碑，見證荷蘭海軍與明朝將領交涉歷史。", coords:{x:100,y:310}, cultureAsset:"國定古蹟 / 國家最古老碑石", distinction:"全台地區最早建廟", type:"民建" },
+      { id:"lukang_old", name:"鹿港天后宮", year:1591, displayYear:"明萬曆十九年 (1591年)", location:"彰化縣鹿港鎮", region:"中部", era:"明朝時期", class:"國定古蹟", desc:"創建於明代，是台灣唯一奉祀湄洲祖廟開基二媽神尊的廟宇。其大木作與八卦藻井由大木匠師王益順設計，為全台泉州派建築代表作之一。", coords:{x:185,y:280}, cultureAsset:"國定古蹟 / 湄洲開基二媽", distinction:"全台唯一祖廟二媽", type:"民建" },
+      { id:"wanggang", name:"魍港天妃宮 (太聖宮)", year:1633, displayYear:"明崇禎六年 (約1633年)", location:"嘉義縣布袋鎮", region:"南部", era:"明朝時期", class:"國家重要古物", desc:"由明代海商鄭芝龍招募來台開墾者所興建。廟內「魍港媽」神像具明代雕刻風格，是全台首尊獲得國家重要古物認證的媽祖金身。", coords:{x:165,y:350}, cultureAsset:"國家重要古物 / 縣定古蹟", distinction:"台灣本島最早建廟", type:"民建" },
+      { id:"kaiji_tainan", name:"開基天后宮 (小媽祖廟)", year:1663, displayYear:"明永曆十七年 (1663年)", location:"臺南市中西區", region:"南部", era:"明鄭時期", class:"國定古蹟", desc:"鄭成功收復台灣後，民間集資興建的首座媽祖廟，與後來官方興建的大天后宮相對應，俗稱「小媽祖廟」。", coords:{x:170,y:405}, cultureAsset:"國定古蹟 / 府城最早民建", distinction:"本島最早民建媽祖廟", type:"民建" },
+      { id:"grand_tainan", name:"臺南大天后宮", year:1664, displayYear:"明永曆十八年 (1664年)", location:"臺南市中西區", region:"南部", era:"明鄭時期", class:"國定古蹟", desc:"原為明朝寧靖王朱術桂府邸。施琅為安撫民心、宣揚天命，奏請康熙帝改建為天妃宮，後加封天后，成為台灣第一座官建官祀媽祖廟。", coords:{x:172,y:412}, cultureAsset:"國定古蹟 / 台灣首座官建", distinction:"全台第一座官方列祀", type:"官建" },
+      { id:"beidou_dianan", name:"北斗奠安宮", year:1684, displayYear:"清康熙二十三年 (1684年)", location:"彰化縣北斗鎮", region:"中部", era:"清領初期", class:"歷史建築", desc:"前身為東螺街天后宮，建於康熙年間。後因清嘉慶年間水災與兵燹，遷建於寶斗街，與彰化南瑤宮、鹿港天后宮並稱彰化三大媽祖廟。", coords:{x:195,y:295}, cultureAsset:"歷史建築 / 東螺媽", distinction:"彰化三大媽祖廟之一", type:"民建" },
+      { id:"lukang_xingan", name:"鹿港興安宮", year:1684, displayYear:"清康熙二十三年 (1684年)", location:"彰化縣鹿港鎮", region:"中部", era:"清領初期", class:"縣定古蹟", desc:"鹿港最早的媽祖廟，由福建興化府移民攜帶媽祖香火來台所建。屬於同鄉祭祀的人群廟，規模雖小但保留高度古貌。", coords:{x:183,y:282}, cultureAsset:"縣定古蹟 / 莆田人群廟", distinction:"鹿港第一古廟", type:"民建" },
+      { id:"xinzhuang_ciyou", name:"新莊慈祐宮", year:1686, displayYear:"清康熙二十五年 (1686年)", location:"新北市新莊區", region:"北部", era:"清領初期", class:"直轄市定古蹟", desc:"大台北地區歷史最悠久的媽祖廟，見證新莊作為台北第一港市與一府二鹿三新莊的拓荒年代，廟內留有眾多清代古匾。", coords:{x:215,y:65}, cultureAsset:"市定古蹟 / 台北盆地拓荒起點", distinction:"大台北最早建廟", type:"民建" },
+      { id:"beigang_chaotian", name:"北港朝天宮", year:1694, displayYear:"清康熙三十三年 (1694年)", location:"雲林縣北港鎮", region:"中部", era:"清領初期", class:"國定古蹟", desc:"由臨濟宗樹璧和尚自福建湄洲祖廟恭迎媽祖神像由笨港登陸建廟。香火極盛，迎媽祖與笨港進香均被指定為國家重要民俗。", coords:{x:175,y:325}, cultureAsset:"國定古蹟 / 兩項國家重要民俗", distinction:"台灣媽祖信仰核心重鎮", type:"民建" },
+      { id:"qingshui_shoutian", name:"清水壽天宮", year:1709, displayYear:"清康熙四十八年 (1709年)", location:"臺中市清水區", region:"中部", era:"清領初期", class:"地方信仰中心", desc:"清水地區最古老的媽祖廟，相傳由開基先民自湄洲奉迎天上聖母香火，保佑台中海線居民開墾平安。", coords:{x:200,y:235}, cultureAsset:"清水第一古廟", distinction:"台中海線拓荒見證", type:"民建" },
+      { id:"guandu", name:"關渡宮", year:1712, displayYear:"清康熙五十一年 (1712年)", location:"台北市北投區", region:"北部", era:"清領初期", class:"地方信仰中心", desc:"創立於康熙年間，依山傍水，居關渡隘口。為北台灣歷史最悠久的媽祖廟之一，關渡媽信仰深深扎根大台北。", coords:{x:210,y:55}, cultureAsset:"北台灣媽祖信仰重鎮", distinction:"與北港、鹿港並列三大媽祖廟", type:"民建" },
+      { id:"yuanli_cihe", name:"苑裡慈和宮", year:1714, displayYear:"清康熙五十三年 (1714年)", location:"苗栗縣苑裡鎮", region:"中部", era:"清領初期", class:"地方信仰中心", desc:"地方俗稱蓬山媽祖。相傳康熙年間開基先民奉迎湄洲媽祖香火渡海來台，後由地方士紳集資建廟。", coords:{x:205,y:215}, cultureAsset:"蓬山媽祖香火三百年", distinction:"苗栗海線最古老媽祖廟", type:"民建" },
+      { id:"dazhuang_haotian", name:"大庄浩天宮", year:1723, displayYear:"清雍正元年 (1723年)", location:"臺中市梧棲區", region:"中部", era:"清領初期", class:"歷史建築", desc:"為大肚中堡五十三庄信仰中心，信徒尊稱大庄媽或潛水媽。進香歷史悠久，保留大量清代匾額與傳統彩繪。", coords:{x:198,y:242}, cultureAsset:"歷史建築 / 五十三庄境主", distinction:"台中海線信仰雙雄", type:"民建" },
+      { id:"dajia_zhenlan", name:"大甲鎮瀾宮", year:1732, displayYear:"清雍正十年 (1732年)", location:"臺中市大甲區", region:"中部", era:"清領初期", class:"地方信仰中心", desc:"每年農曆三月舉辦大甲媽祖遶境進香，徒步行程長達三百多公里，橫跨中彰雲嘉四縣市，是世界級宗教慶典。", coords:{x:202,y:225}, cultureAsset:"國家重要民俗 (大甲媽進香)", distinction:"世界級宗教慶典核心", type:"民建" },
+      { id:"changhua_nanyao", name:"彰化南瑤宮", year:1738, displayYear:"清乾隆三年 (1738年)", location:"彰化縣彰化市", region:"中部", era:"清領初期", class:"縣定古蹟", desc:"因建於彰化縣城南門外而得名南瑤。徒步笨港進香首創於清嘉慶年間，被譽為台灣第一進香團。", coords:{x:193,y:275}, cultureAsset:"縣定古蹟 / 台灣第一進香團", distinction:"全台首創徒步進香團", type:"民建" },
+      { id:"songshan_ciyou", name:"松山慈祐宮", year:1753, displayYear:"清乾隆十八年 (1753年)", location:"台北市松山區", region:"北部", era:"清領初期", class:"地方信仰中心", desc:"舊稱錫口媽祖廟，由泉州行腳僧衡兵雅師攜媽祖神像渡海募資創立，是大台北東區錫口十三街拓荒信仰核心。", coords:{x:222,y:60}, cultureAsset:"錫口十三街總主祀 / 台北東區守護神", distinction:"台北東區最具代表性媽祖廟", type:"民建" },
+      { id:"keelung_qingan", name:"基隆慶安宮", year:1780, displayYear:"清乾隆四十五年 (1780年)", location:"基隆市仁愛區", region:"北部", era:"清領初期", class:"歷史建築", desc:"俗稱基隆媽，建於清乾隆年間。緊鄰基隆港，護佑基隆由社口發展為國際大港的歷史，亦見證地方漳泉和平。", coords:{x:235,y:45}, cultureAsset:"歷史建築 / 基隆三大廟之一", distinction:"雨港守護神與漳泉和平象徵", type:"民建" },
+      { id:"xingang_fengtian", name:"新港奉天宮", year:1811, displayYear:"清嘉慶十六年 (1811年)", location:"嘉義縣新港鄉", region:"南部", era:"清領中後期", class:"縣定古蹟", desc:"古笨港大水災毀廟後，由太子少保王得祿將軍倡建重建於新港，是大甲媽祖遶境、南瑤宮進香的重要停駐點。", coords:{x:178,y:345}, cultureAsset:"縣定古蹟 / 開台媽祖祖廟", distinction:"王得祿將軍倡建", type:"民建" },
+      { id:"baishatun_gongtian", name:"白沙屯拱天宮", year:1863, displayYear:"清同治二年 (1863年)", location:"苗栗縣通霄鎮", region:"中部", era:"清領中後期", class:"國家重要民俗", desc:"每年白沙屯天上聖母前往北港朝天宮進香，最大特色為沒有固定路線，全憑媽祖鑾轎神意指引。", coords:{x:206,y:208}, cultureAsset:"國家重要民俗 / 無固定路線進香", distinction:"最神祕與張力的行腳", type:"民建" }
+    ];
+
+    const questions = [
+      { question:"台灣歷史上第一座由官方興建（官建官祀）的媽祖廟是哪一座？", options:["北港朝天宮","臺南大天后宮","澎湖天后宮","鹿港天后宮"], answer:1, explanation:"臺南大天后宮是台灣第一座官建媽祖廟。原為明寧靖王朱術桂府邸，施琅平台後奏請改建並加封媽祖為天后。" },
+      { question:"哪一座媽祖廟奉祀的神尊，經鑑定具有明代雕刻風格，並獲得「國家重要古物」認證？", options:["白沙屯拱天宮","大甲鎮瀾宮","魍港天妃宮 (太聖宮)","鹿港興安宮"], answer:2, explanation:"嘉義布袋的魍港天妃宮（太聖宮）奉祀之魍港媽，具明代雕刻特徵，是台灣首尊獲得國家重要古物認證的媽祖神像。" },
+      { question:"下列哪一個活動被指定為國家重要民俗，且以「沒有固定路線、完全依鑾轎神意指引」聞名全國？", options:["大甲媽祖遶境進香","白沙屯媽祖北港進香","彰化南瑤宮笨港進香","北港朝天宮迎媽祖"], answer:1, explanation:"苗栗白沙屯拱天宮前往北港進香，最大特色是沒有預定路線，行進方向與停駕地點由媽祖神轎指引。" }
+    ];
+
+    const state = {
+      selectedId: "penghu",
+      search: "",
+      era: "全部",
+      region: "全部",
+      view: "chart",
+      compareMode: false,
+      compareIds: [],
+      quizIndex: 0,
+      selectedAnswer: null,
+      score: 0,
+      finished: false
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+    const escapeHtml = (text) => String(text).replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char]));
+
+    function filteredTemples() {
+      return temples
+        .filter(t => {
+          const q = state.search.trim();
+          const matchSearch = !q || t.name.includes(q) || t.location.includes(q) || t.desc.includes(q);
+          return matchSearch && (state.era === "全部" || t.era === state.era) && (state.region === "全部" || t.region === state.region);
+        })
+        .sort((a, b) => a.year - b.year);
+    }
+
+    function selectTemple(id) {
+      if (state.compareMode) {
+        if (state.compareIds.includes(id)) {
+          state.compareIds = state.compareIds.filter(item => item !== id);
+        } else if (state.compareIds.length < 2) {
+          state.compareIds.push(id);
+        } else {
+          state.compareIds = [state.compareIds[0], id];
+        }
+      } else {
+        state.selectedId = id;
+      }
+      render();
+    }
+
+    function renderStats() {
+      $("#totalCount").innerHTML = `${temples.length} <small>座</small>`;
+      $("#nationalCount").innerHTML = `${temples.filter(t => t.class.includes("國定")).length} <small>座</small>`;
+      const sorted = [...temples].sort((a, b) => a.year - b.year);
+      const data = [];
+      let count = 0;
+      for (let year = 1590; year <= 1870; year += 20) {
+        count += sorted.filter(t => t.year >= year - 20 && t.year < year).length;
+        data.push({ year, count });
+      }
+      const points = data.map((item, index) => {
+        const x = (index / (data.length - 1)) * 300;
+        const y = 62 - (item.count / temples.length) * 50;
+        return { x, y };
+      });
+      const line = points.map((p, i) => `${i ? "L" : "M"} ${p.x},${p.y}`).join(" ");
+      const area = `M 0,70 ${points.map(p => `L ${p.x},${p.y}`).join(" ")} L 300,70 Z`;
+      $("#trendChart").innerHTML = `
+        <defs><linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ef4444" stop-opacity=".25"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></linearGradient></defs>
+        <line x1="0" y1="58" x2="300" y2="58" stroke="#e7e5e4" stroke-dasharray="3 3"/>
+        <path d="${area}" fill="url(#trendFill)"></path>
+        <path d="${line}" fill="none" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"></path>
+        ${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="2.5" fill="#be123c"></circle>`).join("")}
+        <text x="0" y="10" fill="#a8a29e" font-size="8">1590</text><text x="95" y="10" fill="#a8a29e" font-size="8">1680</text><text x="195" y="10" fill="#a8a29e" font-size="8">1780</text><text x="276" y="10" fill="#a8a29e" font-size="8">1870</text>
+      `;
+    }
+
+    function laneTemples(items) {
+      const lanes = [];
+      return items.map(t => {
+        let lane = 0;
+        while (lanes[lane] !== undefined && t.year - lanes[lane] < 15) lane += 1;
+        lanes[lane] = t.year;
+        return { ...t, lane };
+      });
+    }
+
+    function renderList() {
+      const items = filteredTemples();
+      if (!items.length) {
+        $("#listArea").innerHTML = `<div class="panel empty"><h2>無符合篩選條件的宮廟</h2><p>請調整歷史時期、地理區域或搜尋關鍵字。</p></div>`;
+        return;
+      }
+      if (state.view === "timeline") {
+        $("#listArea").innerHTML = `<div class="timeline">${items.map(timelineCard).join("")}</div>`;
+      } else if (state.view === "grid") {
+        $("#listArea").innerHTML = `<div class="grid">${items.map(gridCard).join("")}</div>`;
+      } else {
+        renderChart(items);
+      }
+      $$("#listArea [data-id]").forEach(el => el.addEventListener("click", () => selectTemple(el.dataset.id)));
+    }
+
+    function renderChart(items) {
+      const chartItems = laneTemples(items);
+      const ticks = [1600, 1620, 1640, 1660, 1680, 1700, 1720, 1740, 1760, 1780, 1800, 1820, 1840, 1860];
+      $("#listArea").innerHTML = `
+        <div class="chart-panel panel">
+          <div class="section-title">
+            <div><h2>等比例建廟分佈時間軸圖</h2><p>以歷史年代為軸線，動態避免文字重疊分層顯示</p></div>
+            <span class="pill">左右拖曳觀看</span>
+          </div>
+          <div class="rail-scroll">
+            <div class="rail">
+              <div class="era-band" style="left:0;width:33%;background:rgba(244,63,94,.025)"><span>明代與明鄭時期</span></div>
+              <div class="era-band" style="left:33%;width:42%;background:rgba(245,158,11,.025)"><span>清領統治初期</span></div>
+              <div class="era-band" style="left:75%;width:25%;background:rgba(120,113,108,.04)"><span>清領中後期</span></div>
+              <div class="axis"></div>
+              ${ticks.map(year => `<div class="tick" style="left:${((year - 1590) / 280) * 100}%"><span>${year}</span></div>`).join("")}
+              ${chartItems.map(chartNode).join("")}
+            </div>
+          </div>
+          <div class="hint show"><span>點擊時間軸卡片，右側會同步展示台灣地圖位置與完整文史檔案。</span></div>
+        </div>`;
+    }
+
+    function chartNode(t) {
+      const selected = state.selectedId === t.id && !state.compareMode;
+      const comparing = state.compareIds.includes(t.id);
+      const left = ((t.year - 1590) / 280) * 100;
+      const up = t.lane % 2 === 1;
+      const depth = Math.floor(t.lane / 2) + 1;
+      const offset = (up ? -1 : 1) * 45 * depth;
+      const top = `calc(50% + ${offset * -1}px)`;
+      const stemTop = offset < 0 ? "50%" : "auto";
+      const stemBottom = offset > 0 ? "50%" : "auto";
+      return `
+        <div class="temple-node" style="left:${left}%;top:${top}" data-id="${t.id}">
+          <div class="stem" style="height:${Math.abs(offset)}px;top:${stemTop};bottom:${stemBottom};background:${comparing ? "#d97706" : selected ? "#be123c" : "#d6d3d1"}"></div>
+          <div class="mini-card ${selected ? "selected" : ""} ${comparing ? "compare" : ""}">
+            <strong>${t.year}年</strong><b>${escapeHtml(t.name)}</b><span>${escapeHtml(t.location)}</span>
+          </div>
+          <div class="dot ${selected ? "selected" : ""} ${comparing ? "compare" : ""}" style="top:calc(50% + ${offset}px)"></div>
+        </div>`;
+    }
+
+    function timelineCard(t) {
+      const selected = state.selectedId === t.id && !state.compareMode;
+      const comparing = state.compareIds.includes(t.id);
+      return `
+        <article class="timeline-card card ${selected ? "selected" : ""} ${comparing ? "compare" : ""}" data-id="${t.id}">
+          <div class="meta"><span class="tag">${escapeHtml(t.displayYear)}</span><strong>${escapeHtml(t.location)}</strong></div>
+          <h3>${escapeHtml(t.name)} <span style="color:#78716c;font-size:.78rem">(${escapeHtml(t.era)})</span></h3>
+          <p>${escapeHtml(t.desc)}</p>
+          <div class="chips"><span class="chip">${escapeHtml(t.class)}</span><span class="chip">${escapeHtml(t.distinction)}</span><span class="chip">${escapeHtml(t.type)}</span></div>
+        </article>`;
+    }
+
+    function gridCard(t) {
+      const selected = state.selectedId === t.id && !state.compareMode;
+      const comparing = state.compareIds.includes(t.id);
+      return `
+        <article class="grid-card card ${selected ? "selected" : ""} ${comparing ? "compare" : ""}" data-id="${t.id}">
+          <div>
+            <div class="meta"><span class="tag">${escapeHtml(t.displayYear)}</span><strong>${escapeHtml(t.location)}</strong></div>
+            <h3>${escapeHtml(t.name)}</h3>
+            <p>${escapeHtml(t.desc)}</p>
+          </div>
+          <div class="chips"><span class="chip">${escapeHtml(t.class)}</span><span class="chip">${escapeHtml(t.distinction)}</span></div>
+        </article>`;
+    }
+
+    function renderMap() {
+      const items = filteredTemples();
+      const labels = items.map(t => {
+        const selected = state.selectedId === t.id && !state.compareMode;
+        const comparing = state.compareIds.includes(t.id);
+        const x = t.coords.x * .9;
+        const y = t.coords.y * .9 + 25;
+        const label = (selected || comparing) ? `
+          <rect x="${x + 10}" y="${y - 13}" width="${Math.max(72, t.name.length * 12 + 12)}" height="22" rx="5" fill="#fff" stroke="${comparing ? "#d97706" : "#be123c"}" stroke-width="1.2"></rect>
+          <text x="${x + 16}" y="${y + 2}" fill="${comparing ? "#92400e" : "#9f1239"}" font-size="10" font-weight="800">${escapeHtml(t.name)}</text>` : "";
+        return `
+          <g data-id="${t.id}" style="cursor:pointer">
+            ${(selected || comparing) ? `<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="${comparing ? "#d97706" : "#be123c"}" stroke-width="1.4" opacity=".55"></circle>` : ""}
+            <circle cx="${x}" cy="${y}" r="${selected || comparing ? 6 : 4}" fill="${comparing ? "#d97706" : selected ? "#be123c" : "#94a3b8"}" stroke="#fff" stroke-width="1.8"></circle>
+            ${label}
+          </g>`;
+      }).join("");
+      $("#taiwanMap").innerHTML = `
+        <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#a8a29e" stroke-width=".4" opacity=".12"/></pattern></defs>
+        <rect width="320" height="500" fill="url(#grid)"></rect>
+        <path d="M 180,30 C 195,45 220,70 230,90 C 240,110 245,130 240,150 C 235,170 220,210 215,250 C 210,290 200,330 185,370 C 170,410 155,440 145,465 C 135,445 140,415 135,385 C 130,355 125,325 120,295 C 115,265 130,235 140,205 C 145,175 152,145 162,115 C 170,85 174,55 180,30 Z" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.6"></path>
+        <circle cx="65" cy="275" r="5" fill="#e2e8f0" stroke="#cbd5e1"></circle><circle cx="68" cy="285" r="3" fill="#e2e8f0" stroke="#cbd5e1"></circle><circle cx="58" cy="280" r="4" fill="#e2e8f0" stroke="#cbd5e1"></circle>
+        ${labels}
+      `;
+      $$("#taiwanMap [data-id]").forEach(el => el.addEventListener("click", () => selectTemple(el.dataset.id)));
+    }
+
+    function currentTemple() {
+      return temples.find(t => t.id === state.selectedId) || temples[0];
+    }
+
+    function renderDetail() {
+      if (state.compareMode && state.compareIds.length === 2) {
+        const [a, b] = state.compareIds.map(id => temples.find(t => t.id === id));
+        const diff = Math.abs(a.year - b.year);
+        const older = a.year < b.year ? a.name : b.year < a.year ? b.name : "同年建廟";
+        $("#detailArea").innerHTML = `
+          <div class="compare-box panel" id="compareResults">
+            <div class="section-title"><div><h2>雙廟歷史比較報告</h2><p>年代、建廟背景與特色差異</p></div><button class="btn" id="resetCompare">重新選擇</button></div>
+            <div class="compare-grid">
+              <div class="compare-card"><span class="pill">宮廟 A</span><h4>${escapeHtml(a.name)}</h4><small>${escapeHtml(a.displayYear)}</small></div>
+              <div class="compare-card"><span class="pill">宮廟 B</span><h4>${escapeHtml(b.name)}</h4><small>${escapeHtml(b.displayYear)}</small></div>
+            </div>
+            <div class="compare-rows">
+              <div><span>歷史年份差異</span><span>${diff === 0 ? "建於同年" : `相差約 ${diff} 年`}</span></div>
+              <div><span>較早建廟</span><span>${escapeHtml(older)}</span></div>
+              <div><span>興建背景</span><span>${escapeHtml(a.name)}：${escapeHtml(a.type)} / ${escapeHtml(b.name)}：${escapeHtml(b.type)}</span></div>
+              <div><span>特色區別</span><span>${escapeHtml(a.distinction)} / ${escapeHtml(b.distinction)}</span></div>
+            </div>
+          </div>`;
+        $("#resetCompare").addEventListener("click", () => { state.compareIds = []; render(); });
+      } else if (state.compareMode) {
+        $("#detailArea").innerHTML = `<div class="detail panel empty"><h2>請再選擇宮廟</h2><p>對比分析需要選取兩座宮廟。請點擊左側列表、時間軸或地圖地標。</p></div>`;
+      } else {
+        const t = currentTemple();
+        $("#detailArea").innerHTML = `
+          <div class="detail panel">
+            <div class="section-title"><div><h2>經典宮廟文史檔案</h2><p>${escapeHtml(t.location)}</p></div></div>
+            <span class="tag">${escapeHtml(t.displayYear)}</span>
+            <h2>${escapeHtml(t.name)}</h2>
+            <div class="detail-box">${escapeHtml(t.desc)}</div>
+            <div class="info-list">
+              <div><h4>登錄文化資產 / 級別</h4><p>${escapeHtml(t.cultureAsset)}</p></div>
+              <div><h4>主要歷史特色</h4><p style="color:var(--red)">${escapeHtml(t.distinction)}</p></div>
+              <div><h4>官祀與民建背景</h4><p>屬於 <span style="color:var(--red)">${escapeHtml(t.type)}</span> 媽祖廟。${t.type === "官建" ? "由官方主導興建，帶有安撫民心與強化統治正當性的任務。" : "由地方移民、墾首、同鄉或郊商集資籌建，反映海洋守護與地方生活情感。"}</p></div>
+            </div>
+          </div>`;
+      }
+    }
+
+    function renderCompareHint() {
+      const hint = $("#compareHint");
+      $("#compareToggle").textContent = state.compareMode ? "退出對比模式" : "啟動宮廟比對";
+      $("#compareToggle").classList.toggle("active", state.compareMode);
+      hint.classList.toggle("show", state.compareMode);
+      if (state.compareMode) {
+        const names = state.compareIds.map(id => temples.find(t => t.id === id)?.name).filter(Boolean).join(" 與 ");
+        $("#compareHintText").textContent = `比對模式已啟動：請選擇兩座媽祖廟。${names ? "目前選擇：" + names : ""}`;
+        $("#jumpCompare").style.display = state.compareIds.length === 2 ? "inline-flex" : "none";
+      }
+    }
+
+    function renderQuiz() {
+      const body = $("#quizBody");
+      if (state.finished) {
+        $("#quizProgress").textContent = "挑戰完成";
+        body.innerHTML = `
+          <div class="empty">
+            <h2>挑戰完成</h2>
+            <p>您的總得分為 <strong style="color:var(--red);font-size:1.4rem">${state.score} / ${questions.length}</strong> 分。</p>
+            <button class="btn primary" id="restartQuiz">再挑戰一次</button>
+          </div>`;
+        $("#restartQuiz").addEventListener("click", () => { state.quizIndex = 0; state.selectedAnswer = null; state.score = 0; state.finished = false; renderQuiz(); });
+        return;
+      }
+      const q = questions[state.quizIndex];
+      $("#quizProgress").textContent = `問題 ${state.quizIndex + 1} / ${questions.length}`;
+      body.innerHTML = `
+        <h3>${escapeHtml(q.question)}</h3>
+        <div class="answers">
+          ${q.options.map((option, index) => {
+            let klass = "answer";
+            if (state.selectedAnswer !== null) {
+              if (index === q.answer) klass += " correct";
+              else if (index === state.selectedAnswer) klass += " wrong";
+              else klass += " disabled";
+            }
+            return `<button class="${klass}" data-answer="${index}" ${state.selectedAnswer !== null ? "disabled" : ""}>${escapeHtml(option)}</button>`;
+          }).join("")}
+        </div>
+        <div class="explanation ${state.selectedAnswer !== null ? "show" : ""}">
+          <strong style="color:var(--amber)">文史背景考證小筆記</strong>
+          <p>${escapeHtml(q.explanation)}</p>
+          <button class="btn primary" id="nextQuiz">${state.quizIndex < questions.length - 1 ? "下一題" : "完成挑戰"}</button>
+        </div>`;
+      $$(".answer").forEach(btn => btn.addEventListener("click", () => {
+        const selected = Number(btn.dataset.answer);
+        state.selectedAnswer = selected;
+        if (selected === q.answer) state.score += 1;
+        renderQuiz();
+      }));
+      const next = $("#nextQuiz");
+      if (next) next.addEventListener("click", () => {
+        state.selectedAnswer = null;
+        if (state.quizIndex < questions.length - 1) state.quizIndex += 1;
+        else state.finished = true;
+        renderQuiz();
+      });
+    }
+
+    function render() {
+      renderStats();
+      renderCompareHint();
+      renderList();
+      renderMap();
+      renderDetail();
+    }
+
+    $("#searchInput").addEventListener("input", event => { state.search = event.target.value; render(); });
+    $("#eraSelect").addEventListener("change", event => { state.era = event.target.value; render(); });
+    $("#regionSelect").addEventListener("change", event => { state.region = event.target.value; render(); });
+    $$(".segmented button").forEach(button => button.addEventListener("click", () => {
+      state.view = button.dataset.view;
+      $$(".segmented button").forEach(item => item.classList.toggle("active", item === button));
+      render();
+    }));
+    $("#compareToggle").addEventListener("click", () => {
+      state.compareMode = !state.compareMode;
+      state.compareIds = [];
+      render();
+    });
+    $("#jumpCompare").addEventListener("click", () => $("#detailArea").scrollIntoView({ behavior: "smooth", block: "start" }));
+    render();
+    renderQuiz();
+  </script>
+</body>
+</html>
