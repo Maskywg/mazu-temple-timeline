@@ -603,6 +603,7 @@
     function renderChart(items) {
       const chartItems = laneTemples(items);
       const ticks = [1600, 1620, 1640, 1660, 1680, 1700, 1720, 1740, 1760, 1780, 1800, 1820, 1840, 1860];
+      const timelineX = year => 90 + ((year - 1590) / 280) * (1400 - 180);
       $("#listArea").innerHTML = `
         <div class="chart-panel panel">
           <div class="section-title">
@@ -614,8 +615,8 @@
               <div class="era-band" style="left:0;width:33%;background:rgba(244,63,94,.025)"><span>明代與明鄭時期</span></div>
               <div class="era-band" style="left:33%;width:42%;background:rgba(245,158,11,.025)"><span>清領統治初期</span></div>
               <div class="era-band" style="left:75%;width:25%;background:rgba(120,113,108,.04)"><span>清領中後期</span></div>
-              <div class="axis"></div>
-              ${ticks.map(year => `<div class="tick" style="left:${((year - 1590) / 280) * 100}%"><span>${year}</span></div>`).join("")}
+              <div class="axis" style="left:90px;right:90px"></div>
+              ${ticks.map(year => `<div class="tick" style="left:${timelineX(year)}px"><span>${year}</span></div>`).join("")}
               ${chartItems.map(chartNode).join("")}
             </div>
           </div>
@@ -626,7 +627,7 @@
     function chartNode(t) {
       const selected = state.selectedId === t.id && !state.compareMode;
       const comparing = state.compareIds.includes(t.id);
-      const left = ((t.year - 1590) / 280) * 100;
+      const left = 90 + ((t.year - 1590) / 280) * (1400 - 180);
       const up = t.lane % 2 === 1;
       const depth = Math.floor(t.lane / 2) + 1;
       const offset = (up ? -1 : 1) * 45 * depth;
@@ -634,7 +635,7 @@
       const stemTop = offset < 0 ? "50%" : "auto";
       const stemBottom = offset > 0 ? "50%" : "auto";
       return `
-        <div class="temple-node" style="left:${left}%;top:${top}" data-id="${t.id}">
+        <div class="temple-node" style="left:${left}px;top:${top}" data-id="${t.id}">
           <div class="stem" style="height:${Math.abs(offset)}px;top:${stemTop};bottom:${stemBottom};background:${comparing ? "#d97706" : selected ? "#be123c" : "#d6d3d1"}"></div>
           <div class="mini-card ${selected ? "selected" : ""} ${comparing ? "compare" : ""}">
             <strong>${t.year}年</strong><b>${escapeHtml(t.name)}</b><span>${escapeHtml(t.location)}</span>
